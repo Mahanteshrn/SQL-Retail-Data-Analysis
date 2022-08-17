@@ -51,11 +51,12 @@ FROM TRANSACTIONS;
 
 ---Q4 BEGIN------------------------------------------------------------------------------------
 
-SELECT *,
-CONVERT(DATE, tran_date, 105) AS NEW_FORMAT_TRAN_DATE,
-DAY(CONVERT(DATE, tran_date, 105)) AS [DAYS],
-YEAR(CONVERT(DATE, tran_date, 105)) AS [YEARS],
-MONTH(CONVERT(DATE, tran_date, 105)) AS [MONTH]
+SELECT 
+MIN(CONVERT(DATE, tran_date, 105)) AS BEGIN_TRANSACTION_DATE,
+MAX(CONVERT(DATE, tran_date, 105)) AS END_TRANSACTION_DATE,
+DATEDIFF(DAY, MIN(CONVERT(DATE, tran_date, 105)), MAX(CONVERT(DATE, tran_date, 105))) AS NUMBER_OF_DAYS,
+DATEDIFF(MONTH, MIN(CONVERT(DATE, tran_date, 105)), MAX(CONVERT(DATE, tran_date, 105))) AS NUMBER_OF_MONTHS,
+DATEDIFF(YEAR, MIN(CONVERT(DATE, tran_date, 105)), MAX(CONVERT(DATE, tran_date, 105))) AS NUMBER_OF_YEAR
 FROM TRANSACTIONS;
 
 ---Q4 END------------------------------------------------------------------------------------
@@ -261,7 +262,9 @@ HAVING AVG(CAST(TOTAL_AMT AS FLOAT)) >
 
 ---Q15 BEGIN---------------------------------------------------------------------------------
 
-SELECT * FROM (SELECT ROW_NUMBER() OVER(ORDER BY COUNT (prod_cat) DESC ) AS RNUM, prod_cat, prod_subcat, AVG(CAST(TOTAL_AMT AS FLOAT)) AS AVG_SALE, 
+SELECT * FROM (SELECT ROW_NUMBER() OVER(ORDER BY COUNT (prod_cat) DESC ) AS RNUM, prod_cat, 
+prod_subcat,
+AVG(CAST(TOTAL_AMT AS FLOAT)) AS AVG_SALE, 
 SUM(CAST(TOTAL_AMT AS FLOAT)) AS TOTAL_SALE,
 COUNT (prod_cat) AS TOTAL_QUANTITY
 FROM
